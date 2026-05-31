@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'presentation/views/login_page.dart';
+import 'presentation/views/security_login_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -12,13 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SPARKS - Smart Parking System',
+      title: 'SPARKS - Security Dashboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-        fontFamily: 'Inter', // opsional, hapus jika belum ada font
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F1F35)),
+        fontFamily: 'Inter',
       ),
-      home: LoginPage(),
+      home: const SecurityLoginPage(),
     );
   }
 }
