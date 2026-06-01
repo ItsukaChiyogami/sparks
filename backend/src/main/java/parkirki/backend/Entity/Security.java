@@ -1,22 +1,24 @@
 package parkirki.backend.Entity;
 
-import java.time.LocalDateTime;
-
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
-@Data
 @Entity
 @Table(name = "security")
+@Data  // ✅ Generate getter/setter untuk SEMUA field
+@NoArgsConstructor
+@AllArgsConstructor
 public class Security {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id; // BUG FIXED: Sebelumnya Anda tulis mahasiswa_id
+    private Long id;
 
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
@@ -26,6 +28,9 @@ public class Security {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "role", length = 20)
+    private String role = "SECURITY";
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

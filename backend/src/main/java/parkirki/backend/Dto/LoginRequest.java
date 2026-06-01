@@ -1,9 +1,9 @@
 package parkirki.backend.Dto;
 
-import lombok.Data;
+import lombok.Data;  // ← HARUS ADA
 
-@Data
+@Data  // ← HARUS ADA
 public class LoginRequest {
-    private String identifier; // NIM atau NIP
+    private String identifier;
     private String password;
 }
