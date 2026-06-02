@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../viewmodels/security_auth_viewmodel.dart'; // Pastikan path import ini sesuai struktur foldermu
 import 'security_login_page.dart';
 import 'live_cam_page.dart';
 import 'security_notification_page.dart';
@@ -9,9 +10,6 @@ final activeSecurityPageProvider = StateProvider<String>((ref) => 'livecam');
 
 class SecurityShellPage extends ConsumerWidget {
   const SecurityShellPage({super.key});
-
-  static const _navy = Color(0xFF0F1F35);
-  static const _navyLight = Color(0xFF162840);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,6 +46,9 @@ class _Sidebar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 🟢 Ambil state auth global untuk mendapatkan profil user yang login
+    final authState = ref.watch(securityAuthProvider);
+
     return Container(
       width: 260,
       color: Colors.white,
@@ -122,22 +123,22 @@ class _Sidebar extends ConsumerWidget {
                             color: Colors.white70, size: 24),
                       ),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Joe Taslim',
-                              style: TextStyle(
+                              authState.fullName ?? 'No Name', // 🟢 Dinamis sesuai database
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
                             ),
-                            SizedBox(height: 2),
+                            const SizedBox(height: 2),
                             Text(
-                              '58273890836',
-                              style: TextStyle(
+                              authState.nip ?? '000000000000', // 🟢 Dinamis sesuai database
+                              style: const TextStyle(
                                 color: Colors.white38,
                                 fontSize: 12,
                               ),
