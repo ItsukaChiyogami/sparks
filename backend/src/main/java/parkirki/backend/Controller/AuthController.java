@@ -10,6 +10,8 @@ import parkirki.backend.Service.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+// Batasi hanya dari origin port Flutter Web Anda (biasanya port 5000-an atau '*' untuk semua)
+@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class AuthController {
 
     private final AuthService authService;
