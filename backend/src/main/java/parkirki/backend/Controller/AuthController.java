@@ -10,7 +10,6 @@ import parkirki.backend.Service.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-// Batasi hanya dari origin port Flutter Web Anda (biasanya port 5000-an atau '*' untuk semua)
 @CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class AuthController {
 
@@ -22,8 +21,9 @@ public class AuthController {
             LoginResponse response = authService.login(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            // 🟢 Menggunakan 5 argumen agar sesuai dengan struktur DTO baru
             return ResponseEntity.badRequest().body(
-                new LoginResponse(null, null, null, "Login gagal: " + e.getMessage())
+                new LoginResponse(null, null, null, "Login gagal: " + e.getMessage(), null)
             );
         }
     }

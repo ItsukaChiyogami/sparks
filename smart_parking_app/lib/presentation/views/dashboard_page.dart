@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../viewmodels/auth_viewmodel.dart'; // 🟢 Menghubungkan ke Auth Provider mahasiswa
 import '../viewmodels/dashboard_viewmodel.dart';
 import 'notification_page.dart';
 import 'profile_page.dart';
@@ -87,9 +88,18 @@ class _DashboardBody extends StatelessWidget {
 class _TopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 🟢 Ambil data user Mahasiswa yang sedang aktif login dari authProvider
+    final currentUser = ref.watch(authProvider).user;
+
+    // Logika mengambil nama depan saja untuk sapaan (Contoh: "Valentino Luciano" -> "Valentino")
+    final String displayName = currentUser != null && currentUser.fullName.isNotEmpty
+        ? currentUser.fullName.trim().split(' ')[0]
+        : 'User';
+
     return Row(
       children: [
         // Avatar
+        // Tanda 'const' pada Card ini dicopot agar widget dapat merender perubahan state nama secara berkala
         GestureDetector(
           onTap: () => Navigator.push(
             context,
@@ -105,22 +115,24 @@ class _TopBar extends ConsumerWidget {
         const SizedBox(width: 12),
 
         // Greeting text
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 🟢 Mengganti teks dummy "Hai, Alfian!" menjadi nama depan dinamis
               Text(
-                'Hai, Alfian!',
-                style: TextStyle(
+                'Hai, $displayName!',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
                 ),
               ),
+              // 🟢 Mengganti email dummy menjadi nomor NIM asli mahasiswa dari database
               Text(
-                'ateng@ciputra.ac.id',
-                style: TextStyle(
+                currentUser?.nim ?? '-',
+                style: const TextStyle(
                   color: Colors.white60,
                   fontSize: 12,
                 ),
@@ -261,7 +273,7 @@ class _ParkingVisualCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MOTORCYCLE PAINTER — tampak atas, mirip desain
+// MOTORCYCLE PAINTER
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _MotorcyclePainter extends CustomPainter {
@@ -272,7 +284,6 @@ class _MotorcyclePainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
 
-    // -- Bayangan --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.18, h * 0.06, w * 0.64, h * 0.88),
@@ -281,7 +292,6 @@ class _MotorcyclePainter extends CustomPainter {
       shadowPaint,
     );
 
-    // -- Body utama motor (lonjong vertikal) --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.2, h * 0.04, w * 0.60, h * 0.86),
@@ -290,7 +300,6 @@ class _MotorcyclePainter extends CustomPainter {
       paint,
     );
 
-    // -- Stang (horizontal bar atas) --
     final stangPaint = Paint()
       ..color = const Color(0xFF333333)
       ..strokeWidth = 6
@@ -301,7 +310,6 @@ class _MotorcyclePainter extends CustomPainter {
       stangPaint,
     );
 
-    // -- Spion kiri --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(0, h * 0.10, w * 0.12, h * 0.08),
@@ -310,7 +318,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = const Color(0xFF222222),
     );
 
-    // -- Spion kanan --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.88, h * 0.10, w * 0.12, h * 0.08),
@@ -319,7 +326,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = const Color(0xFF222222),
     );
 
-    // -- Lampu depan (putih kecil) --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.32, h * 0.04, w * 0.36, h * 0.06),
@@ -328,7 +334,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = Colors.white54,
     );
 
-    // -- Tangki / body tengah (highlight) --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.28, h * 0.30, w * 0.44, h * 0.24),
@@ -337,7 +342,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = const Color(0xFF2A2A2A),
     );
 
-    // -- Roda depan --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.25, h * 0.04, w * 0.50, h * 0.13),
@@ -346,7 +350,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = const Color(0xFF111111),
     );
 
-    // -- Roda belakang --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.25, h * 0.83, w * 0.50, h * 0.13),
@@ -355,7 +358,6 @@ class _MotorcyclePainter extends CustomPainter {
       Paint()..color = const Color(0xFF111111),
     );
 
-    // -- Lampu belakang (merah kecil) --
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.30, h * 0.90, w * 0.40, h * 0.05),
@@ -455,8 +457,6 @@ class _SparksBranding extends StatelessWidget {
       'assets/Logo.jpg',
       height: 48,
       fit: BoxFit.contain,
-      // Karena background gelap, pakai ColorFiltered agar logo tetap terlihat
-      // Hapus ColorFiltered jika logo sudah punya background transparan (.png)
     );
   }
 }
