@@ -1,0 +1,13 @@
+names:
+- motor-biru
+- motor-merah
+nc: 2
+roboflow:
+  license: Private
+  project: train_motor_mainan
+  url: https://app.roboflow.com/felicias-workspace-nerbz/train_motor_mainan/2
+  version: 2
+  workspace: felicias-workspace-nerbz
+test: ../test/images
+train: ../train/images
+val: ../valid/images

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/live_cam_viewmodel.dart';
 import '../../data/models/parked_vehicle_model.dart';
+import 'package:flutter_mjpeg/flutter_mjpeg.dart';
 
 class LiveCamPage extends ConsumerWidget {
   const LiveCamPage({super.key});
@@ -65,43 +66,50 @@ class LiveCamPage extends ConsumerWidget {
           // ── Camera Feed ───────────────────────────────────
           Container(
             width: double.infinity,
-            height: 340,
+            height: 500,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(12),
-              image: const DecorationImage(
-                image: AssetImage('assets/parking_bg.jpg'),
-                fit: BoxFit.cover,
-              ),
+              color: Colors.black, // Background hitam saat loading
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Stack(
-              children: [
-                // Simulasi bounding box motor terdeteksi
-                ...List.generate(state.parkedVehicles.length, (i) {
-                  return Positioned(
-                    left: 30.0 + (i * 175),
-                    top: 40,
-                    child: Container(
-                      width: 155,
-                      height: 240,
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Colors.greenAccent, width: 2.5),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Mjpeg(
+                isLive: true,
+                // CATATAN PENTING UNTUK URL:
+                // - Jika pakai Emulator Android, ganti 'localhost' menjadi '10.0.2.2'
+                // - Jika pakai HP Fisik, ganti dengan IP Address Laptopmu (misal: '192.168.1.5')
+                stream: 'http://192.168.8.228:5000/video_feed',
+                error: (context, error, stackTrace) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.videocam_off,
+                            color: Colors.white, size: 40),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Gagal terhubung ke Kamera Server\n$error',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 12),
+                        ),
+                      ],
                     ),
                   );
-                }),
-              ],
+                },
+                loading: (context) => const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                ),
+              ),
             ),
           ),
-
           const SizedBox(height: 16),
 
           // ── Alarm Banner ──────────────────────────────────
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -122,8 +130,7 @@ class LiveCamPage extends ConsumerWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () =>
-                      ref.read(liveCamProvider.notifier).toggleAlarm(),
+                  onTap: () => ref.read(liveCamProvider.notifier).toggleAlarm(),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(
