@@ -17,10 +17,7 @@ class DashboardPage extends ConsumerWidget {
         fit: StackFit.expand,
         children: [
           // ── Background parkiran ─────────────────────────────
-          Image.asset(
-            'assets/parking_bg.jpg',
-            fit: BoxFit.cover,
-          ),
+          Image.asset('assets/parking_bg.jpg', fit: BoxFit.cover),
 
           // ── Dark overlay ────────────────────────────────────
           Container(color: Colors.black.withOpacity(0.60)),
@@ -92,7 +89,8 @@ class _TopBar extends ConsumerWidget {
     final currentUser = ref.watch(authProvider).user;
 
     // Logika mengambil nama depan saja untuk sapaan (Contoh: "Valentino Luciano" -> "Valentino")
-    final String displayName = currentUser != null && currentUser.fullName.isNotEmpty
+    final String displayName =
+        currentUser != null && currentUser.fullName.isNotEmpty
         ? currentUser.fullName.trim().split(' ')[0]
         : 'User';
 
@@ -132,10 +130,7 @@ class _TopBar extends ConsumerWidget {
               // 🟢 Mengganti email dummy menjadi nomor NIM asli mahasiswa dari database
               Text(
                 currentUser?.nim ?? '-',
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Colors.white60, fontSize: 12),
               ),
             ],
           ),
@@ -226,34 +221,45 @@ class _ParkingVisualCard extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(right: 6),
                 child: SizedBox(
-                  width: 64,
-                  child: CustomPaint(
-                    painter: _MotorcyclePainter(),
-                  ),
+                  width: 50, // Sedikit diperkecil agar pas saat 5 motor penuh
+                  child: CustomPaint(painter: _MotorcyclePainter()),
                 ),
               );
             }),
 
-            // Sisa ruang (grey box dengan ukuran cm)
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(6),
+            // Sisa ruang (Hanya muncul jika sisa cm > 0 agar tidak overflow)
+            if (dashboard.remainingWidthCm > 0)
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$remainingCm cm',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
                 ),
+              )
+            else
+              const Expanded(
                 child: Center(
                   child: Text(
-                    '$remainingCm cm',
-                    style: const TextStyle(
-                      fontSize: 18,
+                    'Penuh',
+                    style: TextStyle(
+                      color: Colors.red,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
               ),
-            ),
 
             const SizedBox(width: 8),
 
@@ -453,10 +459,6 @@ class _SlotInfoCard extends StatelessWidget {
 class _SparksBranding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/Logo.jpg',
-      height: 48,
-      fit: BoxFit.contain,
-    );
+    return Image.asset('assets/Logo.jpg', height: 48, fit: BoxFit.contain);
   }
 }
